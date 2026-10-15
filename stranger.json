@@ -1,0 +1,75 @@
+{
+  "expectedTarballFiles": [
+    "package/LICENSE",
+    "package/README.md",
+    "package/package.json",
+    "package/dist/index.js",
+    "package/dist/index.d.ts",
+    "package/docs/api/README.md"
+  ],
+  "localDependencies": ["../shiitake"],
+  "consumerDevDependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0"
+  },
+  "runtimeFixture": "test/stranger/runtime.mjs",
+  "typecheckFixture": "test/stranger/consumer.mts",
+  "docs": {
+    "sigil": "computer",
+    "home": {
+      "lead": "Report what a Shiitake client is doing right now into its Herdr pane, so Herdr can show idle, working or blocked without polling your process.",
+      "example": {
+        "file": "home.ts",
+        "title": "Attach an activity stream",
+        "caption": "attachCorral attaches a borrowed activity stream; outside a Herdr pane (no HERDR_ENV) it safely no-ops without opening a socket."
+      },
+      "ladder": {
+        "start": [
+          {
+            "title": "Quickstart",
+            "href": "/quickstart/",
+            "description": "Attach a scripted activity stream and watch it report nothing outside Herdr."
+          },
+          {
+            "title": "Core concepts",
+            "href": "/concepts/#core-concepts",
+            "description": "What activity means, and what Corral never touches."
+          }
+        ],
+        "tasks": [
+          {
+            "title": "Gate attachment to a Herdr pane",
+            "href": "/concepts/#core-concepts",
+            "description": "Corral attaches only when HERDR_ENV is 1 and the socket path and pane ID are set."
+          },
+          {
+            "title": "Report blocked while a question waits",
+            "href": "/concepts/#core-concepts",
+            "description": "A pending question or browser hand-off reports blocked until it's answered."
+          },
+          {
+            "title": "Run the activity tests",
+            "href": "/examples/#examples-and-checks",
+            "description": "pnpm --filter corral test covers gating, activity changes and cleanup."
+          }
+        ],
+        "reference": [
+          {
+            "title": "API reference",
+            "href": "/api/",
+            "description": "The default client extension and attachCorral's lower-level entry."
+          },
+          {
+            "title": "Install",
+            "href": "/install/",
+            "description": "Effect and Shiitake at runtime, and the Node.js version."
+          },
+          {
+            "title": "Status and limits",
+            "href": "/status/",
+            "description": "Stability, IPC timeouts and license."
+          }
+        ]
+      }
+    }
+  }
+}

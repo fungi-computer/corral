@@ -1,0 +1,61 @@
+{
+  "name": "@fungi.computer/corral",
+  "version": "0.0.0",
+  "description": "Optional Herdr activity reporting for Shiitake clients",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "docs/api",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint src test --max-warnings=0",
+    "test": "vitest run",
+    "docs": "tsx ../../tooling/repository/src/docs/cli.ts check --root ../..",
+    "docs:write": "tsx ../../tooling/repository/src/docs/cli.ts write --root ../..",
+    "pack": "mkdir -p ../../.botanical/corral-pack && pnpm pack --pack-destination ../../.botanical/corral-pack",
+    "smoke": "node --input-type=module -e \"import('./dist/index.js').then(({ attachCorral }) => { if (typeof attachCorral !== 'function') process.exit(1); })\"",
+    "stranger": "tsx ../../tooling/repository/src/artifacts/cli.ts --repo-root ../.. .",
+    "format:check": "node ../../tooling/repository/scripts/format-package-check.mjs",
+    "lint:anti-slop": "node ../../tooling/repository/scripts/lint-package-anti-slop.mjs"
+  },
+  "dependencies": {
+    "effect": "4.0.2",
+    "@fungi.computer/shiitake": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  },
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "botanical": {
+    "role": "package",
+    "operations": {
+      "lint": "required",
+      "typecheck": "required",
+      "build": "required",
+      "test": "required",
+      "docs": "required",
+      "pack": "required",
+      "smoke": "required",
+      "stranger": "required"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fungi-computer/corral.git"
+  }
+}
