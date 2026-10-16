@@ -1,6 +1,6 @@
 {
   "name": "@fungi.computer/corral",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Optional Herdr activity reporting for Shiitake clients",
   "type": "module",
   "sideEffects": false,
@@ -39,6 +39,7 @@
     "vitest": "4.1.11"
   },
   "license": "MIT",
+  "author": "Levi <levi@technomancy.dev>",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "botanical": {
