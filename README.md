@@ -34,7 +34,7 @@ import { attachCorral } from "@fungi.computer/corral";
 
 const scope = await Effect.runPromise(Scope.make());
 await Effect.runPromise(
-  attachCorral(Stream.fromIterable(["idle", "working"]), {
+  attachCorral(Stream.fromIterable([{ state: "idle" }, { state: "working" }]), {
     environment: {
       HERDR_ENV: "1",
       HERDR_SOCKET_PATH: "/path/to/herdr.sock",
@@ -60,10 +60,11 @@ default entry borrows an AsyncIterable with an independent sliding latest-value
 subscription per iterator and a detach signal. `attachCorral` accepts an Effect
 stream, including a stream with typed `Error` failures. Source and socket errors
 reach `onError`; closing the scope still releases the pane report. Fungi borrows
-its existing Session observation and command interaction store. A pending
-question or browser hand-off reports `blocked`. Answering it restores the
-current activity. Question text, answers and credentials are never included in
-reports.
+its existing Session observation and command interaction store. An open agent
+question, a pending command question or a browser hand-off reports `blocked`.
+Answering it restores the current activity. An agent question may add its short
+header to the blocked message; question bodies, answer choices, answers and
+credentials are never included in reports.
 
 Herdr derives `done` when an unseen background turn returns to `idle`. It owns
 whether the user has seen that completion. Corral never guesses completion from
@@ -72,7 +73,7 @@ an unavailable observation.
 `attachCorral` needs an Effect scope. When that scope closes, Corral cancels its
 reporter, closes any in-flight socket, and releases the current pane report. It
 sends `pane.report_agent` and `pane.release_agent` over Herdr's API socket with
-the `fungi:shiitake:v1` source and `shiitake` agent label. A monotone timestamp
+the `fungi:agent:v1` source and `fungi` agent label. A monotone timestamp
 sequence orders reports across attachments and process restarts.
 
 ## API reference

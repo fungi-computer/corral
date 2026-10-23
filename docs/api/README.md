@@ -38,7 +38,7 @@ Activity supplied by the client; blocked means a human response is pending.
 const default: Readonly<{
   protocol: "shiitake.client/v1";
   id: string & Brand<"ExtensionId">;
-  correlatedPrompts?: "note";
+  promptPresentation?: "footer";
   attach?: (context) => Effect<void, Error, Scope>;
   contribute?: (slot) => object;
 }>;
@@ -60,7 +60,7 @@ Attach to borrowed activity; never opens a Session watch or starts Herdr.
 
 | Parameter  | Type                                                                                                          |
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
-| `activity` | `Stream`\<`ClientActivityV0`, `Error`\>                                                                       |
+| `activity` | `Stream`\<`Readonly`\<\{ `state`: `ClientActivityStateV0`; `header?`: `string`; \}\>, `Error`\>               |
 | `options`  | `Readonly`\<\{ `environment`: [`CorralEnvironment`](#corralenvironment); `onError`: (`cause`) => `void`; \}\> |
 
 #### Returns

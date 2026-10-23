@@ -96,7 +96,7 @@ it("does not subscribe outside a Herdr socket environment", async () => {
     Stream.fromEffect(
       Effect.sync((): CorralActivity => {
         subscribed = true;
-        return "idle";
+        return { state: "idle" };
       }),
     ),
     { environment: {}, onError: (error) => errors.push(error) },
@@ -119,12 +119,12 @@ it("reports all states in order with deduplication, monotone sequence and one re
     if (requests.length === 5) reported.resolve(undefined);
   });
   const states: readonly CorralActivity[] = [
-    "unknown",
-    "idle",
-    "idle",
-    "working",
-    "blocked",
-    "idle",
+    { state: "unknown" },
+    { state: "idle" },
+    { state: "idle" },
+    { state: "working" },
+    { state: "blocked" },
+    { state: "idle" },
   ];
   const attachment = await attachmentFor(Stream.fromIterable(states), {
     environment: host.environment,
@@ -145,8 +145,8 @@ it("reports all states in order with deduplication, monotone sequence and one re
     expect(requests.at(-1)?.method).toBe("pane.release_agent");
     expect(requests[3]?.params.message).toBe("Waiting for your response");
     for (const [index, request] of requests.entries()) {
-      expect(request.params.agent).toBe("shiitake");
-      expect(request.params.source).toBe("fungi:shiitake:v1");
+      expect(request.params.agent).toBe("fungi");
+      expect(request.params.source).toBe("fungi:agent:v1");
       expect(request.params.pane_id).toBe("test-pane");
       if (index > 0)
         expect(request.params.seq).toBeGreaterThan(
@@ -174,7 +174,7 @@ it("cancels an unacknowledged socket report and releases exactly once", async ()
       started.resolve(undefined);
     } else socket.end(`${JSON.stringify({ id: request.id, result: {} })}\n`);
   });
-  const attachment = await attachmentFor(Stream.succeed("working"), {
+  const attachment = await attachmentFor(Stream.succeed({ state: "working" }), {
     environment: host.environment,
     onError: (error) => errors.push(error),
   });
@@ -214,7 +214,7 @@ it("reports a refused response through onError and still releases", async () => 
       )}\n`,
     );
   });
-  const attachment = await attachmentFor(Stream.succeed("idle"), {
+  const attachment = await attachmentFor(Stream.succeed({ state: "idle" }), {
     environment: host.environment,
     onError: (error) => {
       errors.push(error);
@@ -259,6 +259,32 @@ it("reports a failed borrowed activity stream with its original cause and still 
     expect(requests.map(({ method }) => method)).toEqual([
       "pane.release_agent",
     ]);
+  } finally {
+    await attachment.close();
+    await host.close();
+  }
+});
+
+it("sends only an attention header with the blocked report", async () => {
+  const requests: Request[] = [];
+  const reported = Promise.withResolvers<undefined>();
+  const host = await herdr((request, socket) => {
+    requests.push(request);
+    socket.end(`${JSON.stringify({ id: request.id, result: {} })}\n`);
+    if (requests.length === 1) reported.resolve(undefined);
+  });
+  const attachment = await attachmentFor(
+    Stream.succeed({ state: "blocked", header: "Scope" }),
+    { environment: host.environment, onError: () => undefined },
+  );
+  try {
+    await reported.promise;
+    expect(requests[0]?.params.message).toBe(
+      "Waiting for your response: Scope",
+    );
+    const wire = JSON.stringify(requests[0]);
+    expect(wire).not.toContain("Which scope should the migration cover?");
+    expect(wire).not.toContain("whole repository");
   } finally {
     await attachment.close();
     await host.close();

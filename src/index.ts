@@ -23,7 +23,7 @@ export type CorralEnvironment = Readonly<{
 }>;
 /** Activity supplied by the client; blocked means a human response is pending. */
 export type CorralActivity = ClientActivityV0;
-const source = "fungi:shiitake:v1";
+const source = "fungi:agent:v1";
 let reportSequence = Date.now() * 1000;
 
 type HerdrAgentParams = {
@@ -31,7 +31,7 @@ type HerdrAgentParams = {
   source: string;
   agent: string;
   seq: number;
-  state?: CorralActivity;
+  state?: CorralActivity["state"];
   message?: string;
 };
 
@@ -55,18 +55,23 @@ function nextSequence() {
 function request(
   endpoint: string,
   pane: string,
-  state: CorralActivity | undefined,
+  activity: CorralActivity | undefined,
 ) {
+  const state = activity?.state;
   const seq = nextSequence();
   const id = `${source}:${String(seq)}`;
   const params: HerdrAgentParams = {
     pane_id: pane,
     source,
-    agent: "shiitake",
+    agent: "fungi",
     seq,
   };
   if (state !== undefined) params.state = state;
-  if (state === "blocked") params.message = "Waiting for your response";
+  if (state === "blocked")
+    params.message =
+      activity?.header === undefined
+        ? "Waiting for your response"
+        : `Waiting for your response: ${activity.header}`;
   const body = {
     id,
     method: state === undefined ? "pane.release_agent" : "pane.report_agent",
@@ -113,8 +118,8 @@ export function attachCorral(
     process.platform === "win32"
       ? `\\\\.\\pipe\\${HERDR_SOCKET_PATH}`
       : HERDR_SOCKET_PATH;
-  const send = (state: CorralActivity | undefined) =>
-    request(endpoint, HERDR_PANE_ID, state).pipe(
+  const send = (activity: CorralActivity | undefined) =>
+    request(endpoint, HERDR_PANE_ID, activity).pipe(
       Effect.catch((cause) =>
         Effect.sync(() => {
           options.onError(cause);
@@ -124,7 +129,9 @@ export function attachCorral(
   return Effect.gen(function* () {
     yield* Effect.acquireRelease(Effect.void, () => send(undefined));
     yield* activity.pipe(
-      Stream.changes,
+      Stream.changesWith(
+        (a, b) => a.state === b.state && a.header === b.header,
+      ),
       Stream.runForEach(send),
       Effect.catch((cause) =>
         Effect.sync(() => {

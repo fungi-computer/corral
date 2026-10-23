@@ -8,7 +8,9 @@ import corral, {
 } from "@fungi.computer/corral";
 
 const environment: CorralEnvironment = {};
-const activity: Stream.Stream<CorralActivity> = Stream.succeed("idle");
+const activity: Stream.Stream<CorralActivity> = Stream.succeed({
+  state: "idle",
+});
 const attached: Effect.Effect<void, Error, Scope.Scope> = attachCorral(
   activity,
   { environment, onError: () => undefined },

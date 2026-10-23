@@ -12,7 +12,11 @@
     "@modelcontextprotocol/sdk": "1.30.0"
   },
   "runtimeFixture": "test/stranger/runtime.mjs",
-  "typecheckFixture": "test/stranger/consumer.mts",
+  "typechecks": [
+    {
+      "fixture": "test/stranger/consumer.mts"
+    }
+  ],
   "docs": {
     "sigil": "computer",
     "home": {
