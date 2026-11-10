@@ -1,6 +1,6 @@
 {
   "name": "@fungi.computer/corral",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Optional Herdr activity reporting for Shiitake clients",
   "type": "module",
   "sideEffects": false,
