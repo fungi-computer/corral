@@ -1,6 +1,6 @@
 {
   "name": "@fungi.computer/corral",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "description": "Optional Herdr activity reporting for Shiitake clients",
   "type": "module",
   "sideEffects": false,
@@ -20,18 +20,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint src test --max-warnings=0",
-    "test": "vitest run",
-    "docs": "tsx ../../tooling/repository/src/docs/cli.ts check --root ../..",
-    "docs:write": "tsx ../../tooling/repository/src/docs/cli.ts write --root ../..",
-    "pack": "mkdir -p ../../.botanical/corral-pack && pnpm pack --pack-destination ../../.botanical/corral-pack",
-    "smoke": "node --input-type=module -e \"import('./dist/index.js').then(({ attachCorral }) => { if (typeof attachCorral !== 'function') process.exit(1); })\"",
-    "stranger": "tsx ../../tooling/repository/src/artifacts/cli.ts --repo-root ../.. .",
-    "format:check": "node ../../tooling/repository/scripts/format-package-check.mjs",
-    "lint:anti-slop": "node ../../tooling/repository/scripts/lint-package-anti-slop.mjs"
+    "smoke": "node --input-type=module -e \"import('./dist/index.js').then(({ attachCorral }) => { if (typeof attachCorral !== 'function') process.exit(1); })\""
   },
   "dependencies": {
     "effect": "4.0.2",
-    "@fungi.computer/shiitake": "workspace:*"
+    "@fungi.computer/shiitake": "0.18.1"
   },
   "devDependencies": {
     "@types/node": "24.13.3",
