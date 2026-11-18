@@ -1,26 +1,22 @@
 # Corral (`@fungi.computer/corral`)
 
-Corral reports a Shiitake client's current activity in the active Herdr pane. It
-is an optional client extension: the client supplies activity, and Herdr owns
-the pane and its lifecycle.
+Corral lets a Fungi command-line client tell the terminal app Herdr whether it
+is idle or working, so you can see it at a glance.
 
-## Install or set up
+```mermaid
+flowchart LR
+  Client[Fungi client] -->|activity stream| Corral
+  Corral -->|reports| Herdr[Herdr pane]
+  Scope[Effect scope closes] -->|releases the report| Corral
+```
+
+## Quick start
+
+Install it:
 
 ```sh
 npm install @fungi.computer/corral
 ```
-
-The package ships ESM only and depends on `effect` and
-[Shiitake](../shiitake/README.md) at runtime. Its only entrypoint,
-`@fungi.computer/corral`, exports the Shiitake client extension as its default
-export and `attachCorral` for hosts that supply their own activity stream.
-
-The default extension reads `HERDR_ENV`, `HERDR_SOCKET_PATH`, and
-`HERDR_PANE_ID` from its process environment. It attaches only when `HERDR_ENV`
-is `1` and both the socket path and pane ID are set. Outside that environment,
-attachment has no effect.
-
-## Quick start
 
 This illustrative example attaches a stream supplied by the client. Closing the
 Effect scope stops reporting and releases the pane's report:
@@ -50,6 +46,45 @@ The snippet is illustrative: a real client supplies its live activity stream and
 the Herdr values from its managed environment. The integration tests run report
 and release requests against a local socket server in
 [`test/activity.test.ts`](test/activity.test.ts).
+
+## Common tasks
+
+### Report activity
+
+`attachCorral` takes your activity stream and the Herdr environment. See the
+Quick start.
+
+### Stop reporting
+
+Closing the Effect scope releases the pane's report. See the Quick start.
+
+### Understand the limits
+
+See Limits and errors.
+
+## Reference
+
+### Overview
+
+Corral reports what a Fungi client is doing, such as idle or working, to the
+Herdr pane it runs in. It is an optional client extension: the client supplies
+the activity, and Herdr owns the pane and its lifecycle.
+
+## Install or set up
+
+```sh
+npm install @fungi.computer/corral
+```
+
+The package ships ESM only and depends on `effect` and
+[Shiitake](../shiitake/README.md) at runtime. Its only entrypoint,
+`@fungi.computer/corral`, exports the Shiitake client extension as its default
+export and `attachCorral` for hosts that supply their own activity stream.
+
+The default extension reads `HERDR_ENV`, `HERDR_SOCKET_PATH`, and
+`HERDR_PANE_ID` from its process environment. It attaches only when `HERDR_ENV`
+is `1` and both the socket path and pane ID are set. Outside that environment,
+attachment has no effect.
 
 ## Core concepts
 
