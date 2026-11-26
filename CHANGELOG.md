@@ -1,5 +1,12 @@
 # @fungi.computer/corral
 
+## 0.1.80
+
+### Patch Changes
+
+- Updated dependencies
+  - @fungi.computer/shiitake@0.23.8
+
 ## 0.1.79
 
 ### Patch Changes
